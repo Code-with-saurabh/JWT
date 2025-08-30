@@ -1,131 +1,121 @@
-// SigninForm.js
 import React, { useState } from 'react';
-import { Formik, Form, useField } from 'formik';
+import { useFormik } from 'formik';
+import axios from 'axios'
 import * as Yup from 'yup';
-import {
-  Button,
-  Container,
-  Row,
-  Col,
-  Form as BootstrapForm,
-  Alert,
-  InputGroup,
-} from 'react-bootstrap';
-import { EyeFill, EyeSlashFill } from 'react-bootstrap-icons';
+import './SigninForm.css';
 
-// Validation schema
+// Yup validation schema
 const SigninSchema = Yup.object().shape({
   email: Yup.string()
-    .email('Invalid email')
+    .matches(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      'Invalid email format'
+    )
     .required('Email is required'),
-  password: Yup.string().required('Password is required'),
+
+  password: Yup.string()
+    .required('Password is required')
+    .min(8, 'Password must be at least 8 characters long')
+    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .matches(/\d/, 'Password must contain at least one number')
+    .matches(/[@$!%*?#&]/, 'Password must contain at least one special character (@$!%*?#&)'),
 });
 
-// Reusable text input component
-const TextInput = ({ label, ...props }) => {
-  const [field, meta] = useField(props);
-  const isInvalid = meta.touched && meta.error;
-
-  return (
-    <BootstrapForm.Group className="mb-3" controlId={props.id || props.name}>
-      <BootstrapForm.Label>{label}</BootstrapForm.Label>
-      <BootstrapForm.Control
-        {...field}
-        {...props}
-        isInvalid={!!isInvalid}
-        aria-describedby={`${props.name}-error`}
-      />
-      <BootstrapForm.Control.Feedback type="invalid" id={`${props.name}-error`}>
-        {meta.error}
-      </BootstrapForm.Control.Feedback>
-    </BootstrapForm.Group>
-  );
-};
-
-// Password input with visibility toggle
-const PasswordInput = ({ label, name }) => {
-  const [field, meta] = useField(name);
-  const [showPassword, setShowPassword] = useState(false);
-  const isInvalid = meta.touched && meta.error;
-
-  return (
-    <BootstrapForm.Group className="mb-3" controlId={name}>
-      <BootstrapForm.Label>{label}</BootstrapForm.Label>
-      <InputGroup>
-        <BootstrapForm.Control
-          {...field}
-          type={showPassword ? 'text' : 'password'}
-          isInvalid={!!isInvalid}
-          aria-describedby={`${name}-error`}
-        />
-        <Button
-          variant="outline-secondary"
-          onClick={() => setShowPassword((prev) => !prev)}
-          aria-label={showPassword ? 'Hide password' : 'Show password'}
-          tabIndex={-1}
-        >
-          {showPassword ? <EyeSlashFill /> : <EyeFill />}
-        </Button>
-        <BootstrapForm.Control.Feedback type="invalid" id={`${name}-error`}>
-          {meta.error}
-        </BootstrapForm.Control.Feedback>
-      </InputGroup>
-    </BootstrapForm.Group>
-  );
-};
-
 const SigninForm = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleSubmit = (values, { setSubmitting, resetForm }) => {
-    // Simulate login request
-    setTimeout(() => {
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    validationSchema: SigninSchema,
+    onSubmit: async (values, { resetForm }) => {
+  try {
+    const response = await axios.post("http://localhost:3000/api/signin", values);
+
+    if (response.status === 200) {
       setShowSuccess(true);
-      resetForm();
-      setSubmitting(false);
-    }, 1000);
-  };
+    } else {
+      setShowSuccess(false);
+    }
+
+    console.log(response.data); // actual server response
+    resetForm();
+  } catch (error) {
+    console.error('Signin error:', error);
+    setShowSuccess(false);
+  }
+},
+  });
 
   return (
-    <Container className="mt-5">
-      <Row className="justify-content-md-center">
-        <Col md={6}>
-          <h3 className="mb-4 text-center">User  Sign In</h3>
+    <div className="form-container">
+      <h3>User Sign In</h3>
 
-          {showSuccess && (
-            <Alert variant="success" onClose={() => setShowSuccess(false)} dismissible>
-              Signed in successfully!
-            </Alert>
+      {showSuccess && (
+        <div className="success-message">
+          Signed in successfully!
+          <button className="close-btn" onClick={() => setShowSuccess(false)}>×</button>
+        </div>
+      )}
+
+      <form onSubmit={formik.handleSubmit} noValidate>
+        {/* Email */}
+        <div className="form-group">
+          <label htmlFor="email">Email address</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Enter your email"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.email}
+            className={formik.touched.email && formik.errors.email ? 'input-error' : ''}
+            autoComplete="email"
+          />
+          {formik.touched.email && formik.errors.email && (
+            <div className="error">{formik.errors.email}</div>
           )}
+        </div>
 
-          <Formik
-            initialValues={{ email: '', password: '' }}
-            validationSchema={SigninSchema}
-            onSubmit={handleSubmit}
-          >
-            {({ isSubmitting }) => (
-              <Form noValidate>
-                <TextInput
-                  label="Email address"
-                  name="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  autoComplete="email"
-                />
+        {/* Password */}
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <div className="password-wrapper">
+            <input
+              id="password"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Enter your password"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.password}
+              className={formik.touched.password && formik.errors.password ? 'input-error' : ''}
+              autoComplete="current-password"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(prev => !prev)}
+              className="toggle-btn"
+            >
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
+          {formik.touched.password && formik.errors.password && (
+            <div className="error">{formik.errors.password}</div>
+          )}
+        </div>
 
-                <PasswordInput label="Password" name="password" />
-
-                <div className="d-grid">
-                  <Button type="submit" variant="primary" disabled={isSubmitting}>
-                    {isSubmitting ? 'Signing in...' : 'Sign In'}
-                  </Button>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        </Col>
-      </Row>
-    </Container>
+        {/* Submit button */}
+        <button type="submit" className="submit-btn" disabled={formik.isSubmitting}>
+          {formik.isSubmitting ? 'Signing in...' : 'Sign In'}
+        </button>
+      </form>
+    </div>
   );
 };
 

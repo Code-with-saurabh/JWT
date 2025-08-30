@@ -2,9 +2,14 @@ const express = require("express")
 const app = express()
 const {PORT} = require("./utilities/Config")
 const DbRoute = require("./Routes/dbOprations")
+const UserRoute = require("./Routes/UserRoute")
+const cors = require("cors")
+
+app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
+app.use("/api",UserRoute)
 app.use("/api/db",DbRoute)
 
 app.get("/",(req,res)=>{
