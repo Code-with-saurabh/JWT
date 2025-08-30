@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
-import axios from 'axios'
+import axios from 'axios';
 import * as Yup from 'yup';
 import './SignupForm.css';
 
-// Validation schema using Yup
 const SignupSchema = Yup.object().shape({
   firstName: Yup.string()
     .max(50, 'Too Long!')
@@ -34,6 +33,8 @@ const SignupForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const formik = useFormik({
     initialValues: {
@@ -44,23 +45,36 @@ const SignupForm = () => {
       confirmPassword: '',
     },
     validationSchema: SignupSchema,
-   onSubmit: async (values, { resetForm }) => {
-  try {
-    const response = await axios.post("http://localhost:3000/api/signup", values);
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        const response = await axios.post("http://localhost:3000/api/signup", values);
 
-    if (response.status === 200) {
-      setShowSuccess(true);
-    } else {
-      setShowSuccess(false);
-    }
+        if (response.status === 200) {
+          setShowSuccess(true);
+          setShowError(false);
+          setErrorMessage(''); // Clear any error message
+        } else {
+          setShowSuccess(false);
+          setShowError(true);
+          setErrorMessage('An error occurred, please try again.');
+        }
 
-    console.log(response.data); // actual server response
-    resetForm();
-  } catch (error) {
-    console.error('Signup error:', error);
-    setShowSuccess(false);
-  }
-},
+        console.log(response.data);
+        resetForm();
+      } catch (error) {
+        console.error('Signup error:', error);
+        
+        // Checking if the error is related to the email already existing
+        if (error.response && error.response.data.message === 'Email already exists') {
+          setShowError(true);
+          setErrorMessage('Email already exists, try another one.');
+        } else {
+          setShowError(true);
+          setErrorMessage('An error occurred, please try again.');
+        }
+        setShowSuccess(false);
+      }
+    },
   });
 
   return (
@@ -68,14 +82,20 @@ const SignupForm = () => {
       <h3>User Signup</h3>
 
       {showSuccess && (
-        <div className="success-message">
+        <div className="alert alert-success alert-dismissible fade show" role="alert">
           User registered successfully!
-          <button className="close-btn" onClick={() => setShowSuccess(false)}>×</button>
+          <button type="button" className="btn-close" onClick={() => setShowSuccess(false)} aria-label="Close"></button>
+        </div>
+      )}
+
+      {showError && (
+        <div className="alert alert-danger alert-dismissible fade show" role="alert">
+          {errorMessage}
+          <button type="button" className="btn-close" onClick={() => setShowError(false)} aria-label="Close"></button>
         </div>
       )}
 
       <form onSubmit={formik.handleSubmit} noValidate>
-        {/* First Name */}
         <div className="form-group">
           <label htmlFor="firstName">First Name</label>
           <input
@@ -94,7 +114,6 @@ const SignupForm = () => {
           )}
         </div>
 
-        {/* Last Name */}
         <div className="form-group">
           <label htmlFor="lastName">Last Name</label>
           <input
@@ -113,7 +132,6 @@ const SignupForm = () => {
           )}
         </div>
 
-        {/* Email */}
         <div className="form-group">
           <label htmlFor="email">Email address</label>
           <input
@@ -132,7 +150,6 @@ const SignupForm = () => {
           )}
         </div>
 
-        {/* Password */}
         <div className="form-group">
           <label htmlFor="password">Password</label>
           <div className="password-wrapper">
@@ -160,7 +177,6 @@ const SignupForm = () => {
           )}
         </div>
 
-        {/* Confirm Password */}
         <div className="form-group">
           <label htmlFor="confirmPassword">Confirm Password</label>
           <div className="password-wrapper">
@@ -188,7 +204,6 @@ const SignupForm = () => {
           )}
         </div>
 
-        {/* Submit button */}
         <button type="submit" className="submit-btn" disabled={formik.isSubmitting}>
           {formik.isSubmitting ? 'Submitting...' : 'Sign Up'}
         </button>

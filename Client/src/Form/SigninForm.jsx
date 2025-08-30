@@ -4,7 +4,6 @@ import axios from 'axios'
 import * as Yup from 'yup';
 import './SigninForm.css';
 
-// Yup validation schema
 const SigninSchema = Yup.object().shape({
   email: Yup.string()
     .matches(
@@ -25,6 +24,7 @@ const SigninSchema = Yup.object().shape({
 const SigninForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -33,22 +33,28 @@ const SigninForm = () => {
     },
     validationSchema: SigninSchema,
     onSubmit: async (values, { resetForm }) => {
-  try {
-    const response = await axios.post("http://localhost:3000/api/signin", values);
+      try {
+        const response = await axios.post("http://localhost:3000/api/signin", {
+          email: values.email,
+          confirmPassword: values.password,
+        });
 
-    if (response.status === 200) {
-      setShowSuccess(true);
-    } else {
-      setShowSuccess(false);
-    }
+        if (response.status === 200) {
+          setShowSuccess(true);
+          setShowError(false);
+        } else {
+          setShowSuccess(false);
+          setShowError(true);
+        }
 
-    console.log(response.data); // actual server response
-    resetForm();
-  } catch (error) {
-    console.error('Signin error:', error);
-    setShowSuccess(false);
-  }
-},
+        console.log(response.data);
+        resetForm();
+      } catch (error) {
+        console.error('Signin error:', error);
+        setShowSuccess(false);
+        setShowError(true);
+      }
+    },
   });
 
   return (
@@ -62,8 +68,14 @@ const SigninForm = () => {
         </div>
       )}
 
+    {showError && (
+  <div className="alert alert-danger alert-dismissible fade show" role="alert">
+    Invalid credentials, please try again.
+    <button type="button" className="btn-close" onClick={() => setShowError(false)} aria-label="Close"></button>
+  </div>
+)}
+
       <form onSubmit={formik.handleSubmit} noValidate>
-        {/* Email */}
         <div className="form-group">
           <label htmlFor="email">Email address</label>
           <input
@@ -82,7 +94,6 @@ const SigninForm = () => {
           )}
         </div>
 
-        {/* Password */}
         <div className="form-group">
           <label htmlFor="password">Password</label>
           <div className="password-wrapper">
@@ -110,7 +121,6 @@ const SigninForm = () => {
           )}
         </div>
 
-        {/* Submit button */}
         <button type="submit" className="submit-btn" disabled={formik.isSubmitting}>
           {formik.isSubmitting ? 'Signing in...' : 'Sign In'}
         </button>
