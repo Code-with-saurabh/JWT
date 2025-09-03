@@ -1,5 +1,5 @@
 const JWT = require("jsonwebtoken")
-
+const {JWT_SECRET,JWT_EXPIRES_IN} = require("../utilities/Config")
 
 const User = require("../model/UserModel");
 
@@ -28,11 +28,21 @@ const createNewUser = async (req) => {
         });
 
         const savedUser = await newUser.save();
-        
+         
+        const token = JWT.sign({id:savedUser._id},JWT_SECRET,{expiresIn:JWT_EXPIRES_IN});
+        if(!token){
+             return {
+            status: false,
+            message: "token genrating  Error",
+            error: "Token error",
+        };
+        }
+        console.log(token)
+
         return {
             status: true,
             message: "User created successfully",
-            data: savedUser,
+            data: {UserData:savedUser,token:token},
         };
     } catch (error) {
         return {
