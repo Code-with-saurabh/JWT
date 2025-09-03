@@ -3,6 +3,7 @@ import { useFormik } from 'formik';
 import axios from 'axios';
 import * as Yup from 'yup';
 import './SignupForm.css';
+import { useNavigate } from 'react-router-dom';
 
 const SignupSchema = Yup.object().shape({
   firstName: Yup.string()
@@ -29,12 +30,16 @@ const SignupSchema = Yup.object().shape({
     .required('Confirm your password'),
 });
 
+
 const SignupForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
+
+
 
   const formik = useFormik({
     initialValues: {
@@ -52,7 +57,11 @@ const SignupForm = () => {
         if (response.status === 200) {
           setShowSuccess(true);
           setShowError(false);
-          setErrorMessage(''); // Clear any error message
+          setErrorMessage('');
+          setTimeout(()=>{
+            navigate("/signin");
+          },1000)
+          // Clear any error message
         } else {
           setShowSuccess(false);
           setShowError(true);

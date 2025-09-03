@@ -3,6 +3,7 @@ import { useFormik } from 'formik';
 import axios from 'axios'
 import * as Yup from 'yup';
 import './SigninForm.css';
+import { useNavigate } from 'react-router-dom';
 
 const SigninSchema = Yup.object().shape({
   email: Yup.string()
@@ -25,7 +26,7 @@ const SigninForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
-
+  const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -42,6 +43,8 @@ const SigninForm = () => {
         if (response.status === 200) {
           setShowSuccess(true);
           setShowError(false);
+          
+          navigate("/");
         } else {
           setShowSuccess(false);
           setShowError(true);
