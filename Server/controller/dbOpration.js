@@ -1,3 +1,6 @@
+const JWT = require("jsonwebtoken")
+
+
 const User = require("../model/UserModel");
 
 const defaultRoute = (req, res) => {
