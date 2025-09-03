@@ -69,6 +69,7 @@ const SignupForm = () => {
         }
 
         console.log(response.data);
+        localStorage.setItem("token",response.data.data.token)
         resetForm();
       } catch (error) {
         console.error('Signup error:', error);
