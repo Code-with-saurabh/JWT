@@ -28,7 +28,8 @@ const createNewUser = async (req) => {
         });
 
         const savedUser = await newUser.save();
-         
+        
+
         const token = JWT.sign({id:savedUser._id},JWT_SECRET,{expiresIn:JWT_EXPIRES_IN});
         if(!token){
              return {
@@ -177,7 +178,17 @@ const checkUserCredentials = async (req) => {
     try {
     const user = await User.findOne({ email });
     if (!user) return { status: false, message: "User not found" };
-    return { status: true, data: user };
+    const token = JWT.sign({id:user._id},JWT_SECRET,{expiresIn:JWT_EXPIRES_IN})
+    if(!token){
+        console.log("\ntoken genrating  Error....")
+         return {
+            status: false,
+            message: "token genrating  Error",
+            error: "Token error",
+        };
+    }
+    console.log("Login Token is :",token)
+    return { status: true,  data: {UserData:user,token:token} };
     } catch (error) {
         return {
             status: false,

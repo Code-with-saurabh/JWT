@@ -59,7 +59,7 @@ const SignupForm = () => {
           setShowError(false);
           setErrorMessage('');
           setTimeout(()=>{
-            navigate("/signin");
+            navigate("/");
           },1000)
           // Clear any error message
         } else {

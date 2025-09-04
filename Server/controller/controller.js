@@ -46,7 +46,7 @@ const signin = async (req, res) => {
             return res.status(400).json(result);
         }
 
-        const isPasswordValid = await bcrypt.compare(confirmPassword, result.data.confirmPassword);
+        const isPasswordValid = await bcrypt.compare(confirmPassword, result.data.UserData.confirmPassword);
         if (!isPasswordValid) {
             return res.status(400).json({
                 status: false,
