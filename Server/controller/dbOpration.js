@@ -198,6 +198,24 @@ const checkUserCredentials = async (req) => {
     }
 };
 
+const findUserById = async (req)=>{
+    const userId = req.user.id;
+    try {
+    const user = await User.findById(userId);
+    if (!user) return { status: false, message: "User not found" };
+    
+    console.log("User is :",user)
+    
+    return { status: true,  data:user };
+    } catch (error) {
+        return {
+            status: false,
+            message: "Internal Server Error",
+            error: error.name || "Unknown error",
+        };
+    }
+}
+
 module.exports = {
     defaultRoute,
     createNewUser,
@@ -206,4 +224,6 @@ module.exports = {
     UpdateuserByUsername,
     DeleteuserByUsername,
     checkUserCredentials,
+    findUserById,
+    
 };

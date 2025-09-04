@@ -6,6 +6,7 @@ const {
     UpdateuserByUsername,
     DeleteuserByUsername,
     checkUserCredentials,
+    findUserById,
 } = require("./dbOpration");
 
 const bcrypt = require("bcrypt")
@@ -123,11 +124,8 @@ const deleteUserByUsername = async (req, res) => {
 const getUser = async (req, res) => {
   try {
     
-    const result = {
-      name: "Saurabh Sharma",
-      email: "Saurabh@gmail.com",
-    };
-
+    const result = await  findUserById(req);
+    console.log(req.user)
     return res.status(200).json(result);
   } catch (err) {
     console.error("Error fetching user:", err);

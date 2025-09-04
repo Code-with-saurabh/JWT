@@ -19,7 +19,8 @@ const UserProfile = () => {
             'Authorization' : `Bearer ${localStorage.getItem("token")}`
         }
       });
-      setUserData(response.data);
+      console.log(response)
+      setUserData(response.data.data);
       setShowInfo(true);
     } catch (error) {
       setError('Failed to load user data.');
@@ -46,7 +47,7 @@ const UserProfile = () => {
 
       {showInfo && userData && (
         <div className="user-info-card">
-          <h3 className="user-name">{userData.name || 'N/A'}</h3>
+          <h3 className="user-name">{userData.firstName +" "+userData.lastName || 'N/A'}</h3>
           <p className="user-email">
             <strong>Email:</strong> {userData.email || 'N/A'}
           </p>
