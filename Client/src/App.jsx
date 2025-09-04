@@ -13,8 +13,9 @@ function App() {
   <Route path="/" element={<EcommerceHomePage/>}/>
   <Route path="/signup" element={<SignupForm/>}/>
   <Route path="/signin" element={<SigninForm/>}/>
+  <Route path="/profile" element={<UserProfile/>}/>
 </Routes>       
-<UserProfile/>
+
     </>
   )
 }
