@@ -3,6 +3,7 @@ import SigninForm from './Form/SigninForm'
 import SignupForm from './Form/SignupForm '
 import EcommerceHomePage from './Home/EcommerceHomePage '
 import {Routes,Route} from 'react-router-dom'
+import UserProfile from './UserProfile/UserProfile'
 
 function App() {
  
@@ -13,6 +14,7 @@ function App() {
   <Route path="/signup" element={<SignupForm/>}/>
   <Route path="/signin" element={<SigninForm/>}/>
 </Routes>       
+<UserProfile/>
     </>
   )
 }

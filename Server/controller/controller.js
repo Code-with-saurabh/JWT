@@ -68,6 +68,7 @@ const signin = async (req, res) => {
 
 
 
+
 const readAllUsers = async (req, res) => {
     try {
         const result = await ReadAllUser();
@@ -119,6 +120,21 @@ const deleteUserByUsername = async (req, res) => {
     }
 };
 
+const getUser = async (req, res) => {
+  try {
+    
+    const result = {
+      name: "Saurabh Sharma",
+      email: "Saurabh@gmail.com",
+    };
+
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    return res.status(500).json({ error: "Internal Server Error!" });
+  }
+};
+
 module.exports = {
     defaultRoute,
     signup,
@@ -127,4 +143,5 @@ module.exports = {
     getUserByUsername,
     updateUserByUsername,
     deleteUserByUsername,
+    getUser,
 };

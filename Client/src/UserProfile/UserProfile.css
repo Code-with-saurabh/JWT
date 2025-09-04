@@ -1,0 +1,62 @@
+.user-profile-container {
+  max-width: 320px;
+  margin: 1rem auto;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.toggle-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-btn:hover {
+  background-color: #0056b3;
+}
+
+.loading-text {
+  margin-top: 1rem;
+  color: #555;
+}
+
+.error-text {
+  margin-top: 1rem;
+  color: #d9534f;
+}
+
+.user-info-card {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+  background-color: #fff;
+}
+
+.user-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 2px solid #007bff;
+}
+
+.user-name {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.4rem;
+  color: #333;
+}
+
+.user-email,
+.user-role {
+  margin: 0.25rem 0;
+  color: #555;
+  font-size: 1rem;
+}
