@@ -3,7 +3,7 @@ import { useFormik } from 'formik';
 import axios from 'axios';
 import * as Yup from 'yup';
 import './SignupForm.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link  } from 'react-router-dom';
 
 const SignupSchema = Yup.object().shape({
   firstName: Yup.string()
@@ -218,6 +218,10 @@ const SignupForm = () => {
           {formik.isSubmitting ? 'Submitting...' : 'Sign Up'}
         </button>
       </form>
+      <br/>
+       <p className="signin-link">
+        Already have an account? <Link to="/signin">Sign in</Link>
+      </p>
     </div>
   );
 };

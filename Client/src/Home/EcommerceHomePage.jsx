@@ -107,25 +107,39 @@ const testimonialSliderSettings = {
 const EcommerceHomePage = () => {
   return (
     <>
-      {/* Navbar */}
-      <Navbar bg="light" expand="lg" fixed="top" className="shadow-sm">
-        <Container>
-          <Navbar.Brand as={Link} to="/" className="fw-bold fs-3 text-primary">
-            E-Shop
-          </Navbar.Brand>
-          <Navbar.Toggle aria-controls="navbar-nav" />
-          <Navbar.Collapse id="navbar-nav">
-            <Nav className="ms-auto align-items-center gap-3">
-              <Button as={Link} to="/signin" variant="outline-primary">
-                Sign In
-              </Button>
-              <Button as={Link} to="/signup" variant="primary">
-                Sign Up
-              </Button>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+     <Navbar bg="light" expand="lg" fixed="top" className="shadow-sm">
+  <Container>
+    <Navbar.Brand as={Link} to="/" className="fw-bold fs-3 text-primary">
+      E-Shop
+    </Navbar.Brand>
+    <Navbar.Toggle aria-controls="navbar-nav" />
+    <Navbar.Collapse id="navbar-nav">
+      <Nav className="ms-auto align-items-center gap-3">
+        {!localStorage.getItem("token") ? (
+          <>
+            <Link to="/signin" className="btn btn-outline-primary">
+              Sign In
+            </Link>
+            <Link to="/signup" className="btn btn-primary">
+              Sign Up
+            </Link>
+          </>
+        ) : (
+          <button
+            className="btn btn-danger"
+            onClick={() => {
+              localStorage.removeItem("token");
+              window.location.href = "/signin"; // redirect
+            }}
+          >
+            Logout
+          </button>
+        )}
+      </Nav>
+    </Navbar.Collapse>
+  </Container>
+</Navbar>
+
 
       {/* Hero Section */}
       <section
